@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class rotate : MonoBehaviour
+public class Rotate : MonoBehaviour
 {
     [SerializeField] private float rotateSpeed = 5f;
     [SerializeField] private Vector3 rotationDirection = new Vector3();

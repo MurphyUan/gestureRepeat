@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class FireBullet : MonoBehaviour
+public class Gun : MonoBehaviour 
 {
     [SerializeField] 
     private LineRenderer lineRenderer;
@@ -11,18 +11,52 @@ public class FireBullet : MonoBehaviour
     private Transform firePoint;
     [SerializeField] 
     private float range = 100f;
+    [SerializeField]
+    private int maxAmmo = 10;
+    [SerializeField]
+    private float power = 10f;
 
+    [SerializeField]
+    private AudioSource source;
+    [SerializeField]
+    private AudioClip fire;
+    [SerializeField]
+    private AudioClip reload;
+    [SerializeField]
+    private AudioClip noammo;
+
+    private int currentAmmo;
     private XRGrabInteractable grabbable;
 
-    // Start is called before the first frame update
     void Start()
     {
         grabbable = GetComponent<XRGrabInteractable>();
         grabbable.activated.AddListener(Shoot);
     }
 
+    private void Update() {
+        if (Vector3.Angle(transform.up, Vector3.up) > 80 && currentAmmo < maxAmmo)
+            Reload();
+
+        //text.text = currentAmmo.ToString();
+    }
+
+    private void Reload()
+    {
+        currentAmmo = maxAmmo;
+        //source.PlayOneShot(reload);
+    }
+
     private void Shoot(ActivateEventArgs args)
     {
+        if(currentAmmo < 0) {
+            //source.PlayOneShot(empty);
+            return;
+        }
+
+        //source.PlayOneShot(fire);
+        currentAmmo--;
+
         bool hasHit = Physics.Raycast(firePoint.position, firePoint.forward, out RaycastHit hitInfo, range);
 
         LineRenderer line = Instantiate(lineRenderer);
@@ -35,12 +69,13 @@ public class FireBullet : MonoBehaviour
 
         Rigidbody rb = hitInfo.transform.GetComponent<Rigidbody>();
         if(rb != null) {
-            rb.AddForce(firePoint.forward * 10, ForceMode.Impulse);
+            rb.AddForce(firePoint.forward * power, ForceMode.Impulse);
         }
             
         Target _target = hitInfo.transform.GetComponent<Target>();
         if (_target != null) {
             int score = _target.returnScore();
+            return;
         };
 
         Player _player = hitInfo.transform.GetComponent<Player>();

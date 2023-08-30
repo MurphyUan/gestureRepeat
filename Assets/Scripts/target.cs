@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class target : MonoBehaviour
+public class Target : MonoBehaviour
 {
     [SerializeField] private int score = 1;
 
